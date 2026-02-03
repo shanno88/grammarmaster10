@@ -460,12 +460,12 @@ const App: React.FC = () => {
                       const isExpanded = expandedCardIndex === idx;
 
                       return (
-                        <div key={idx} className={`px-4 py-3 rounded-2xl border-2 ${part.color || 'bg-slate-50 border-slate-200'} relative group cursor-help transition-all hover:-translate-y-1 shadow-sm`}
+                        <div key={idx} className={`px-4 py-3 rounded-2xl border-2 ${part.color || 'bg-slate-50 border-slate-200'} relative group cursor-help transition-all hover:-translate-y-1 shadow-sm overflow-visible`}
                               onClick={() => setExpandedCardIndex(isExpanded ? null : idx)}>
                           <div className="text-[9px] font-black uppercase opacity-60 mb-1 text-center">{part.role}</div>
                           <div className="text-sm font-bold text-center">{part.text}</div>
 
-                          <div className={`hidden lg:group-hover:block absolute bottom-full mb-3 w-52 bg-white p-4 rounded-2xl shadow-2xl border-2 border-indigo-50 z-50 text-xs text-slate-700 pointer-events-none animate-in fade-in zoom-in-95 leading-relaxed ${
+                          <div className={`hidden lg:group-hover:block absolute bottom-full mb-3 w-52 bg-white p-4 rounded-2xl shadow-2xl border-2 border-indigo-50 z-[100] text-xs text-slate-700 pointer-events-none animate-in fade-in zoom-in-95 leading-relaxed ${
                             isFirst ? 'left-0' :
                             isLast ? 'right-0' :
                             'left-1/2 -translate-x-1/2'
@@ -481,7 +481,7 @@ const App: React.FC = () => {
                             }`}></div>
                           </div>
 
-                          <div className={`lg:hidden absolute left-0 right-0 top-full mt-3 w-full bg-white p-4 rounded-2xl shadow-2xl border-2 border-indigo-50 z-50 text-xs text-slate-700 leading-relaxed ${isExpanded ? 'block' : 'hidden'}`}>
+                          <div className={`lg:hidden absolute left-0 right-0 top-full mt-3 w-full bg-white p-4 rounded-2xl shadow-2xl border-2 border-indigo-50 z-[100] text-xs text-slate-700 leading-relaxed ${isExpanded ? 'block' : 'hidden'}`}>
                             <div className="font-black text-indigo-500 mb-2 flex items-center gap-1 border-b border-indigo-50 pb-1">
                               <Star size={10} fill="currentColor" /> {part.role}
                             </div>
