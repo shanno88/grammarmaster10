@@ -4,7 +4,7 @@ import {
   Search, AlertCircle, CheckCircle, GraduationCap, ArrowRight, Info, RefreshCw, Tag, 
   Wand2, Sparkles, Zap, Star, Rocket, Copy, Clock, Cpu, 
   Languages, Settings, ShoppingCart, ChevronLeft, Crown, 
-  XCircle
+  XCircle, CreditCard
 } from 'lucide-react';
 import { AIService } from './services/aiService';
 import { LicenseService } from './services/licenseService';
@@ -17,6 +17,7 @@ import {
 import { 
   GAOKAO_EXAMPLES
 } from './constants';
+import BillingPage from './pages/BillingPage';
 
 // --- Utility Components ---
 const CuteButton = ({ 
@@ -117,6 +118,8 @@ const App: React.FC = () => {
   const [paddleLoading, setPaddleLoading] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [userName, setUserName] = useState('');
+  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
+  const [currentPage, setCurrentPage] = useState<'home' | 'billing'>('home');
 
   const [secretClickCount, setSecretClickCount] = useState(0);
   const lastClickTimeRef = useRef(0);
@@ -305,7 +308,10 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F0F9FF] font-sans text-slate-700 flex justify-center items-start pt-6 pb-10 px-4">
-      <div className="w-full max-w-[520px] bg-white shadow-2xl rounded-[32px] overflow-hidden border-4 border-white ring-4 ring-indigo-100 flex flex-col h-[780px] relative transition-all duration-300">
+      {currentPage === 'billing' ? (
+        <BillingPage onBack={() => setCurrentPage('home')} />
+      ) : (
+        <div className="w-full max-w-[520px] bg-white shadow-2xl rounded-[32px] overflow-hidden border-4 border-white ring-4 ring-indigo-100 flex flex-col h-[780px] relative transition-all duration-300">
         
         <SettingsModal 
           isOpen={showSettings} 
@@ -327,14 +333,24 @@ const App: React.FC = () => {
                 <p className="text-[10px] text-sky-100 font-medium opacity-90">🚀 专家模式：DeepSeek V3 官方驱动 🚀</p>
               </div>
             </div>
-            {licenseStatus.status !== 'active_pro' && (
-              <button 
-                onClick={() => setShowActivation(true)}
-                className="px-3 py-1.5 bg-amber-400 hover:bg-amber-500 text-white rounded-xl shadow-sm text-[10px] font-bold flex items-center gap-1 transition-all active:scale-95 border-b-2 border-amber-600 active:border-b-0"
-              >
-                <Crown size={12} fill="currentColor" /> 升级会员
-              </button>
-            )}
+            <div className="flex gap-2">
+              {licenseStatus.status === 'active_pro' && (
+                <button 
+                  onClick={() => setCurrentPage('billing')}
+                  className="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl shadow-sm text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 border border-white/30"
+                >
+                  <CreditCard size={14} /> 订阅与账单
+                </button>
+              )}
+              {licenseStatus.status !== 'active_pro' && (
+                <button 
+                  onClick={() => setShowActivation(true)}
+                  className="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white rounded-xl shadow-sm text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 border-b-2 border-amber-600 active:border-b-0"
+                >
+                  <Crown size={14} fill="currentColor" /> 升级会员
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="flex gap-2 text-[10px] font-bold">
@@ -551,79 +567,97 @@ const App: React.FC = () => {
                 <XCircle size={24} />
               </button>
               
-              <div className="p-8 bg-gradient-to-br from-indigo-600 to-purple-700 text-white text-center">
-                <ShoppingCart className="mx-auto mb-4 text-indigo-200" size={40} />
-                <h2 className="text-2xl font-black mb-2">解锁 Pro 无限功能</h2>
-                <p className="text-xs text-indigo-100 opacity-80">体验 DeepSeek V3 带来的顶级语法分析</p>
+              <div className="p-5 bg-gradient-to-br from-indigo-600 to-purple-700 text-white text-center">
+                <ShoppingCart className="mx-auto mb-2 text-indigo-200" size={32} />
+                <h2 className="text-xl font-black">解锁 Pro 会员</h2>
               </div>
 
-              <div className="p-8 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
                 {payStep === 'select' ? (
-                  <div className="space-y-8">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div onClick={() => { setPayStep('pay'); }} className="border-2 border-indigo-100 bg-indigo-50 rounded-[24px] p-6 text-center cursor-pointer hover:border-indigo-400 transition-all">
-                        <p className="text-xs font-bold text-indigo-400 mb-2">月度 Pro</p>
-                        <p className="text-3xl font-black text-indigo-700">¥29</p>
+                  <div className="space-y-5">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div onClick={() => { setSelectedPlan('monthly'); setPayStep('pay'); }} className={`border-2 ${selectedPlan === 'monthly' ? 'border-indigo-500 bg-indigo-100' : 'border-indigo-100 bg-indigo-50'} rounded-[20px] p-4 text-center cursor-pointer hover:border-indigo-400 transition-all`}>
+                        <p className="text-xs font-bold text-indigo-400 mb-1">月度 Pro · ¥29 / 月</p>
+                        <p className="text-[10px] text-slate-500">自动续费</p>
                       </div>
-                      <div onClick={() => { setPayStep('pay'); }} className="border-2 border-amber-200 bg-amber-50 rounded-[24px] p-6 text-center cursor-pointer hover:border-amber-400 transition-all relative">
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[10px] px-3 py-0.5 rounded-full font-bold shadow-sm">最值</div>
-                        <p className="text-xs font-bold text-amber-600 mb-2">年度 Pro</p>
-                        <p className="text-3xl font-black text-amber-700">¥199</p>
+                      <div onClick={() => { setSelectedPlan('yearly'); setPayStep('pay'); }} className={`border-2 ${selectedPlan === 'yearly' ? 'border-amber-500 bg-amber-100' : 'border-amber-200 bg-amber-50'} rounded-[20px] p-4 text-center cursor-pointer hover:border-amber-400 transition-all relative`}>
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[9px] px-2 py-0.5 rounded-full font-bold shadow-sm">最值</div>
+                        <p className="text-xs font-bold text-amber-600 mb-1">年度 Pro · ¥199 / 年</p>
+                        <p className="text-[10px] text-slate-500">约 ¥16.6 / 月，自动续费</p>
                       </div>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="bg-indigo-50 p-3 rounded-[16px] border border-indigo-100 text-center">
+                      <p className="text-xs font-black text-indigo-600">当前已选择：{selectedPlan === 'monthly' ? '月度 Pro（¥29 / 月）' : '年度 Pro（¥199 / 年）'}</p>
+                    </div>
+
+                    <div className="space-y-3">
                       <p className="text-xs font-black text-slate-400 uppercase tracking-widest text-center">或输入激活码</p>
                       <input 
                         type="text" 
                         placeholder="在此输入激活码"
-                        className="w-full p-5 border-2 border-slate-100 rounded-[20px] text-center font-mono uppercase tracking-widest focus:border-indigo-400 focus:outline-none text-sm"
+                        className="w-full p-3 border-2 border-slate-100 rounded-[16px] text-center font-mono uppercase tracking-widest focus:border-indigo-400 focus:outline-none text-sm"
                         value={activationCode}
                         onChange={(e) => setActivationCode(e.target.value)}
                       />
-                      <CuteButton onClick={handleActivate} className="w-full py-5 text-base">验证并激活</CuteButton>
+                      <CuteButton onClick={handleActivate} className="w-full py-4 text-sm">验证并激活</CuteButton>
+                    </div>
+
+                    <div className="bg-slate-50 p-2.5 rounded-[14px] border border-slate-100">
+                      <p className="text-[10px] text-slate-500 leading-relaxed">此为订阅服务，将按所选周期以同价自动续费。你可以在「订阅与账单」页面随时关闭自动续费。</p>
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-6 animate-in slide-in-from-right-8">
-                    <div className="space-y-6">
-                      <div className="bg-indigo-50 p-4 rounded-[20px] border border-indigo-100">
-                        <p className="text-xs font-black text-indigo-600 mb-3">请填写邮箱（购买后激活码将发送至此邮箱）</p>
+                  <div className="space-y-4 animate-in slide-in-from-right-8">
+                    <div className="space-y-4">
+                      <div className="bg-indigo-50 p-3 rounded-[16px] border border-indigo-100">
+                        <p className="text-xs font-black text-indigo-600 mb-2">请填写邮箱（购买后激活码将发送至此邮箱）</p>
                         <input 
                           type="email" 
                           placeholder="您的邮箱地址"
-                          className="w-full p-3 border-2 border-indigo-100 rounded-xl text-sm focus:border-indigo-400 focus:outline-none"
+                          className="w-full p-2.5 border-2 border-indigo-100 rounded-lg text-sm focus:border-indigo-400 focus:outline-none"
                           value={userEmail}
                           onChange={(e) => setUserEmail(e.target.value)}
                         />
                         <input 
                           type="text" 
                           placeholder="您的姓名（可选）"
-                          className="w-full p-3 border-2 border-indigo-100 rounded-xl text-sm mt-3 focus:border-indigo-400 focus:outline-none"
+                          className="w-full p-2.5 border-2 border-indigo-100 rounded-lg text-sm mt-2 focus:border-indigo-400 focus:outline-none"
                           value={userName}
                           onChange={(e) => setUserName(e.target.value)}
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-white p-4 rounded-[16px] border-2 border-slate-100 space-y-3">
+                        <h3 className="text-sm font-black text-slate-700">确认并支付</h3>
+                        <div className="space-y-2">
+                          <p className="text-xs text-slate-600">你选择的是：{selectedPlan === 'monthly' ? '月度 Pro（¥29 / 月）' : '年度 Pro（¥199 / 年）'}</p>
+                          <p className="text-lg font-black text-indigo-700">本次支付：{selectedPlan === 'monthly' ? '¥29.00' : '¥199.00'}</p>
+                          <p className="text-[10px] text-slate-500 leading-relaxed">（订阅服务，将按同价自动续费，可在「订阅与账单」中随时关闭，当前周期费用不退款）</p>
+                        </div>
+                      </div>
+
+                      <div className="text-[10px] text-slate-400 leading-relaxed">
+                        点击支付即表示你同意开通 Pro 订阅及自动续费条款。
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
                         <button 
                           onClick={() => !paddleLoading && handlePaddlePay('monthly')}
                           disabled={paddleLoading}
-                          className="border-2 border-indigo-100 bg-indigo-50 rounded-[20px] p-5 text-center cursor-pointer hover:border-indigo-400 transition-all disabled:opacity-50"
+                          className="border-2 border-indigo-100 bg-indigo-50 rounded-[16px] p-3 text-center cursor-pointer hover:border-indigo-400 transition-all disabled:opacity-50"
                         >
-                          <p className="text-xs font-bold text-indigo-400 mb-1">月度 Pro</p>
-                          <p className="text-2xl font-black text-indigo-700">¥29</p>
-                          <p className="text-[10px] text-slate-400 mt-1">自动续费</p>
+                          <p className="text-xs font-bold text-indigo-400 mb-0.5">月度 Pro</p>
+                          <p className="text-xl font-black text-indigo-700">¥29</p>
                         </button>
                         <button 
                           onClick={() => !paddleLoading && handlePaddlePay('yearly')}
                           disabled={paddleLoading}
-                          className="border-2 border-amber-200 bg-amber-50 rounded-[20px] p-5 text-center cursor-pointer hover:border-amber-400 transition-all relative disabled:opacity-50"
+                          className="border-2 border-amber-200 bg-amber-50 rounded-[16px] p-3 text-center cursor-pointer hover:border-amber-400 transition-all relative disabled:opacity-50"
                         >
-                          <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-sm">最值</div>
-                          <p className="text-xs font-bold text-amber-600 mb-1">年度 Pro</p>
-                          <p className="text-2xl font-black text-amber-700">¥199</p>
-                          <p className="text-[10px] text-slate-400 mt-1">自动续费</p>
+                          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[9px] px-2 py-0.5 rounded-full font-bold shadow-sm">最值</div>
+                          <p className="text-xs font-bold text-amber-600 mb-0.5">年度 Pro</p>
+                          <p className="text-xl font-black text-amber-700">¥199</p>
                         </button>
                       </div>
 
@@ -636,9 +670,9 @@ const App: React.FC = () => {
 
                     <button 
                       onClick={() => setPayStep('select')} 
-                      className="w-full py-4 mt-2 text-slate-500 font-black text-sm flex items-center justify-center gap-2 hover:bg-slate-50 rounded-[20px] border-2 border-slate-100 transition-all active:scale-95"
+                      className="w-full py-3 text-slate-500 font-black text-sm flex items-center justify-center gap-2 hover:bg-slate-50 rounded-[16px] border-2 border-slate-100 transition-all active:scale-95"
                     >
-                      <ChevronLeft size={22} /> 返回选择
+                      <ChevronLeft size={20} /> 返回选择
                     </button>
                   </div>
                 )}
@@ -650,7 +684,8 @@ const App: React.FC = () => {
         <div className="absolute bottom-6 right-8 text-indigo-200 text-[12px] font-black rotate-[-5deg] pointer-events-none opacity-50">
           来碗AI 🚀
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 };
