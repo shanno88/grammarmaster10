@@ -120,6 +120,7 @@ const App: React.FC = () => {
   const [userName, setUserName] = useState('');
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
   const [currentPage, setCurrentPage] = useState<'home' | 'billing'>('home');
+  const [expandedCardIndex, setExpandedCardIndex] = useState<number | null>(null);
 
   const [secretClickCount, setSecretClickCount] = useState(0);
   const lastClickTimeRef = useRef(0);
@@ -307,11 +308,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F0F9FF] font-sans text-slate-700 flex justify-center items-start pt-6 pb-10 px-4">
+    <div className="min-h-screen bg-[#F0F9FF] font-sans text-slate-700 flex justify-center items-start pt-6 pb-10 px-6">
       {currentPage === 'billing' ? (
         <BillingPage onBack={() => setCurrentPage('home')} />
       ) : (
-        <div className="w-full max-w-[520px] bg-white shadow-2xl rounded-[32px] overflow-hidden border-4 border-white ring-4 ring-indigo-100 flex flex-col h-[780px] relative transition-all duration-300">
+        <div className="w-full max-w-[1200px] bg-white shadow-2xl rounded-[32px] overflow-hidden border-4 border-white ring-4 ring-indigo-100 flex flex-col min-h-[780px] relative transition-all duration-300">
         
         <SettingsModal 
           isOpen={showSettings} 
@@ -437,31 +438,36 @@ const App: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="p-5 bg-gradient-to-br from-indigo-50/50 to-white rounded-3xl border border-indigo-100 shadow-sm space-y-3">
-                    <div className="flex flex-row items-start gap-3">
-                      <div className="p-2 bg-indigo-100 text-indigo-600 rounded-xl"><Languages size={18} /></div>
-                      <div className="flex-1">
-                        <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-tight">中文翻译</p>
-                        <p className="text-sm font-semibold text-slate-700 leading-relaxed">{analysisResult.translation}</p>
+                  <div className="flex flex-col lg:flex-row gap-6">
+                    <div className="flex-1 space-y-4">
+                      <div className="p-5 bg-gradient-to-br from-indigo-50/50 to-white rounded-3xl border border-indigo-100 shadow-sm space-y-3">
+                        <div className="flex flex-row items-start gap-3">
+                          <div className="p-2 bg-indigo-100 text-indigo-600 rounded-xl"><Languages size={18} /></div>
+                          <div className="flex-1">
+                            <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-tight">中文翻译</p>
+                            <p className="text-sm font-semibold text-slate-700 leading-relaxed">{analysisResult.translation}</p>
+                          </div>
+                        </div>
                       </div>
+                      <p className="text-[10px] text-slate-400 font-medium px-2 flex items-center gap-1 lg:hidden"><Info size={12} /> 💡 点击词卡查看详细语法解释</p>
                     </div>
-                  </div>
 
-                  <p className="text-[10px] text-slate-400 font-medium px-2 flex items-center gap-1"><Info size={12} /> 💡 悬停色块查看详细语法解释</p>
-
-                  <div className="flex flex-wrap gap-3 justify-start">
+                    <div className="flex-1">
+                      <div className="flex flex-wrap gap-3 justify-start">
                     {analysisResult.analysis.map((part, idx) => {
                       const isFirst = idx === 0;
                       const isLast = idx === analysisResult.analysis.length - 1;
-                      
+                      const isExpanded = expandedCardIndex === idx;
+
                       return (
-                        <div key={idx} className={`px-4 py-3 rounded-2xl border-2 ${part.color || 'bg-slate-50 border-slate-200'} relative group cursor-help transition-all hover:-translate-y-1 shadow-sm`}>
+                        <div key={idx} className={`px-4 py-3 rounded-2xl border-2 ${part.color || 'bg-slate-50 border-slate-200'} relative group cursor-help transition-all hover:-translate-y-1 shadow-sm`}
+                              onClick={() => setExpandedCardIndex(isExpanded ? null : idx)}>
                           <div className="text-[9px] font-black uppercase opacity-60 mb-1 text-center">{part.role}</div>
                           <div className="text-sm font-bold text-center">{part.text}</div>
-                          
-                          <div className={`hidden group-hover:block absolute bottom-full mb-3 w-52 bg-white p-4 rounded-2xl shadow-2xl border-2 border-indigo-50 z-50 text-xs text-slate-700 pointer-events-none animate-in fade-in zoom-in-95 leading-relaxed ${
-                            isFirst ? 'left-0' : 
-                            isLast ? 'right-0' : 
+
+                          <div className={`hidden lg:group-hover:block absolute bottom-full mb-3 w-52 bg-white p-4 rounded-2xl shadow-2xl border-2 border-indigo-50 z-50 text-xs text-slate-700 pointer-events-none animate-in fade-in zoom-in-95 leading-relaxed ${
+                            isFirst ? 'left-0' :
+                            isLast ? 'right-0' :
                             'left-1/2 -translate-x-1/2'
                           }`}>
                             <div className="font-black text-indigo-500 mb-2 flex items-center gap-1 border-b border-indigo-50 pb-1">
@@ -469,14 +475,23 @@ const App: React.FC = () => {
                             </div>
                             <p>{part.detail}</p>
                             <div className={`absolute -bottom-2 w-4 h-4 bg-white border-b-2 border-r-2 border-indigo-50 transform rotate-45 ${
-                              isFirst ? 'left-6' : 
-                              isLast ? 'right-6' : 
+                              isFirst ? 'left-6' :
+                              isLast ? 'right-6' :
                               'left-1/2 -translate-x-1/2'
                             }`}></div>
+                          </div>
+
+                          <div className={`lg:hidden absolute left-0 right-0 top-full mt-3 w-full bg-white p-4 rounded-2xl shadow-2xl border-2 border-indigo-50 z-50 text-xs text-slate-700 leading-relaxed ${isExpanded ? 'block' : 'hidden'}`}>
+                            <div className="font-black text-indigo-500 mb-2 flex items-center gap-1 border-b border-indigo-50 pb-1">
+                              <Star size={10} fill="currentColor" /> {part.role}
+                            </div>
+                            <p>{part.detail}</p>
                           </div>
                         </div>
                       );
                     })}
+                  </div>
+                </div>
                   </div>
                 </div>
               )}
