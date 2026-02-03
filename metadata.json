@@ -1,0 +1,7 @@
+{
+  "name": "Grammar Master Pro",
+  "description": "A world-class English grammar analyzer and corrector for students, powered by Gemini AI. Features sentence structure decomposition, intelligent error correction, and a comprehensive middle school exam question bank.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
