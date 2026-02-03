@@ -312,7 +312,7 @@ const App: React.FC = () => {
       {currentPage === 'billing' ? (
         <BillingPage onBack={() => setCurrentPage('home')} />
       ) : (
-        <div className="w-full max-w-[490px] bg-white shadow-2xl rounded-[32px] overflow-hidden border-4 border-white ring-4 ring-indigo-100 flex flex-col min-h-[780px] relative transition-all duration-300 mx-auto">
+        <div className="w-full max-w-[490px] bg-white shadow-2xl rounded-[32px] overflow-hidden border-4 border-white ring-4 ring-indigo-100 flex flex-col h-[780px] relative transition-all duration-300 mx-auto">
         
         <SettingsModal 
           isOpen={showSettings} 
