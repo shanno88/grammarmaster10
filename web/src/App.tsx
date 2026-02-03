@@ -429,6 +429,16 @@ const App: React.FC = () => {
 
               {analysisResult && (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-4">
+                  <div className="p-5 bg-gradient-to-br from-indigo-50/50 to-white rounded-3xl border border-indigo-100 shadow-sm space-y-3">
+                    <div className="flex flex-row items-start gap-3">
+                      <div className="p-2 bg-indigo-100 text-indigo-600 rounded-xl"><Languages size={18} /></div>
+                      <div className="flex-1">
+                        <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-tight">中文翻译</p>
+                        <p className="text-sm font-semibold text-slate-700 leading-relaxed">{analysisResult.translation}</p>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="flex items-center justify-between px-2">
                     <h3 className="text-xs font-black text-indigo-300 uppercase tracking-widest flex items-center gap-2">
                       <Tag size={14} /> 结构拆解
@@ -438,22 +448,9 @@ const App: React.FC = () => {
                     </span>
                   </div>
 
-                  <div className="flex flex-col lg:flex-row gap-6">
-                    <div className="flex-1 space-y-4">
-                      <div className="p-5 bg-gradient-to-br from-indigo-50/50 to-white rounded-3xl border border-indigo-100 shadow-sm space-y-3">
-                        <div className="flex flex-row items-start gap-3">
-                          <div className="p-2 bg-indigo-100 text-indigo-600 rounded-xl"><Languages size={18} /></div>
-                          <div className="flex-1">
-                            <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-tight">中文翻译</p>
-                            <p className="text-sm font-semibold text-slate-700 leading-relaxed">{analysisResult.translation}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-[10px] text-slate-400 font-medium px-2 flex items-center gap-1 lg:hidden"><Info size={12} /> 💡 点击词卡查看详细语法解释</p>
-                    </div>
+                  <p className="text-[10px] text-slate-400 font-medium px-2 flex items-center gap-1 lg:hidden"><Info size={12} /> 💡 点击词卡查看详细语法解释</p>
 
-                    <div className="flex-1">
-                      <div className="flex flex-wrap gap-3 justify-start">
+                  <div className="flex flex-wrap gap-3 justify-start">
                     {analysisResult.analysis.map((part, idx) => {
                       const isFirst = idx === 0;
                       const isLast = idx === analysisResult.analysis.length - 1;
@@ -490,8 +487,6 @@ const App: React.FC = () => {
                         </div>
                       );
                     })}
-                  </div>
-                </div>
                   </div>
                 </div>
               )}
