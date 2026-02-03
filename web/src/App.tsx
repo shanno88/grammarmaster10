@@ -450,7 +450,7 @@ const App: React.FC = () => {
 
                   <p className="text-[10px] text-slate-400 font-medium px-2 flex items-center gap-1 lg:hidden"><Info size={12} /> 💡 点击词卡查看详细语法解释</p>
 
-                  <div className="flex flex-wrap gap-3 justify-start">
+                  <div className="flex flex-wrap gap-3 justify-start pl-12">
                     {analysisResult.analysis.map((part, idx) => {
                       const isFirst = idx === 0;
                       const isLast = idx === analysisResult.analysis.length - 1;
