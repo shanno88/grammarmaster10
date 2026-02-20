@@ -2,19 +2,89 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# Grammar Master Pro
 
-This contains everything you need to run your app locally.
+A mono-repo containing backend API, web frontend, and Electron desktop app.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1ty9avI-R_Mu68pxWgojBkl2UQof0rpjI
+## Project Structure
 
-## Run Locally
+```
+/
+├── backend/          # Express API server (licensing, billing, webhooks)
+│   └── src/
+│       ├── controllers/
+│       ├── routes/
+│       └── services/
+├── frontend/         # React web app (Vercel deployment)
+│   └── src/
+│       ├── pages/
+│       └── services/
+├── electron/         # Electron desktop app
+│   └── src/
+└── package.json      # Root orchestration scripts
+```
 
-**Prerequisites:**  Node.js
+## Quick Start
 
+**Prerequisites:** Node.js 18+
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+### 1. Install all dependencies
+
+```bash
+npm run install:all
+```
+
+### 2. Configure environment
+
+- Copy `.env.example` to `.env` in each package folder
+- Set required environment variables (API keys, database paths, etc.)
+
+### 3. Start development servers
+
+**Web + Backend:**
+```bash
+npm run dev
+```
+- Backend: http://localhost:3001
+- Frontend: http://localhost:3000
+
+**Or start individually:**
+```bash
+# Backend only
+cd backend && npm run dev
+
+# Frontend only
+cd frontend && npm run dev
+
+# Electron + Backend
+npm run dev:electron
+```
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run backend` | Start backend in dev mode |
+| `npm run frontend` | Start frontend in dev mode |
+| `npm run electron` | Start Electron app in dev mode |
+| `npm run dev` | Start backend + frontend concurrently |
+| `npm run dev:electron` | Start backend + Electron concurrently |
+| `npm run install:all` | Install dependencies for all packages |
+
+## Package Details
+
+### Backend (`/backend`)
+- Express.js API server
+- SQLite database via better-sqlite3
+- Paddle webhook handling
+- License management
+
+### Frontend (`/frontend`)
+- React 19 + TypeScript
+- Vite build system
+- Deployed to Vercel
+
+### Electron (`/electron`)
+- Desktop application wrapper
+- Same React codebase as frontend
+- Built with electron-builder
